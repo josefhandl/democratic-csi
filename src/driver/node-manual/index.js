@@ -120,6 +120,10 @@ class NodeManualDriver extends CsiBaseDriver {
         driverResourceType = "filesystem";
         fs_types = ["lustre"];
         break;
+      case "onedata":
+        driverResourceType = "filesystem";
+        fs_types = ["onedata"];
+        break;
       case "iscsi":
         driverResourceType = "volume";
         fs_types = ["ext3", "ext4", "ext4dev", "xfs"];

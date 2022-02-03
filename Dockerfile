@@ -41,7 +41,8 @@ RUN rm -rf docker
 ######################
 # actual image
 ######################
-FROM debian:10-slim
+#FROM debian:10-slim
+FROM ubuntu:18.04
 
 LABEL org.opencontainers.image.source https://github.com/democratic-csi/democratic-csi
 
@@ -74,7 +75,7 @@ COPY --from=build /usr/local/lib/nodejs/bin/node /usr/local/bin/node
 # netbase is required by rpcbind/rpcinfo to work properly
 # /etc/{services,rpc} are required
 RUN apt-get update && \
-        apt-get install -y netbase socat e2fsprogs xfsprogs fatresize dosfstools nfs-common cifs-utils sudo && \
+        apt-get install -y netbase socat e2fsprogs xfsprogs fatresize dosfstools nfs-common cifs-utils sudo curl && \
         rm -rf /var/lib/apt/lists/*
 
 # controller requirements
@@ -88,6 +89,12 @@ RUN chmod +x /usr/local/sbin/iscsiadm
 
 ADD docker/multipath /usr/local/sbin
 RUN chmod +x /usr/local/sbin/multipath
+
+# Install oneclient (OneData client)
+RUN curl -sS  http://get.onedata.org/oneclient.sh | bash
+
+ADD mount.onedata /sbin/mount.onedata
+RUN chmod +x /sbin/mount.onedata
 
 ## USE_HOST_MOUNT_TOOLS=1
 ADD docker/mount /usr/local/bin/mount
@@ -106,4 +113,5 @@ COPY --from=build --chown=csi:csi /home/csi/app /home/csi/app
 WORKDIR /home/csi/app
 
 EXPOSE 50051
-ENTRYPOINT [ "bin/democratic-csi" ]
+ENTRYPOINT ["sleep", "9999"]
+#ENTRYPOINT [ "bin/democratic-csi" ]

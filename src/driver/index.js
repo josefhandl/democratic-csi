@@ -639,6 +639,9 @@ class CsiBaseDriver {
               case "iscsi":
                 fs_type = "ext4";
                 break;
+              case "onedata":
+                fs_type = "onedata";
+                break;
               default:
                 break;
             }
