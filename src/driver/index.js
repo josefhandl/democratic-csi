@@ -366,6 +366,10 @@ class CsiBaseDriver {
     }
 
     switch (node_attach_driver) {
+      case "onedata":
+        //device = `onedata`;
+        device = `${volume_context.server}`;
+        break;
       case "nfs":
       case "lustre":
         device = `${volume_context.server}:${volume_context.share}`;
@@ -602,7 +606,8 @@ class CsiBaseDriver {
               // fsck
               result = await mount.deviceIsMountedAtPath(
                 device,
-                staging_target_path
+                staging_target_path,
+                node_attach_driver
               );
               if (!result) {
                 // https://github.com/democratic-csi/democratic-csi/issues/52#issuecomment-768463401
@@ -623,7 +628,7 @@ class CsiBaseDriver {
             break;
         }
 
-        result = await mount.deviceIsMountedAtPath(device, staging_target_path);
+        result = await mount.deviceIsMountedAtPath(device, staging_target_path, node_attach_driver);
         if (!result) {
           if (!fs_type) {
             switch (node_attach_driver) {
@@ -704,7 +709,7 @@ class CsiBaseDriver {
         break;
       case "block":
         //result = await mount.deviceIsMountedAtPath(device, block_path);
-        result = await mount.deviceIsMountedAtPath("dev", block_path);
+        result = await mount.deviceIsMountedAtPath("dev", block_path, node_attach_driver);
         if (!result) {
           result = await filesystem.pathExists(staging_target_path);
           if (!result) {
@@ -1011,6 +1016,7 @@ class CsiBaseDriver {
     // , "x-democratic-csi.ro"
 
     switch (node_attach_driver) {
+      case "onedata":
       case "nfs":
       case "smb":
       case "lustre":
@@ -1075,7 +1081,8 @@ class CsiBaseDriver {
             }
             result = await mount.deviceIsMountedAtPath(
               normalized_staging_device,
-              target_path
+              target_path,
+              node_attach_driver
             );
             if (!result) {
               throw new GrpcError(

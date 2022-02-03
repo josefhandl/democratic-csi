@@ -10,7 +10,7 @@ FINDMNT_COMMON_OPTIONS = [
   "--nofsroot", // prevents unwanted behavior with cifs volumes
 ];
 
-DEFAUT_TIMEOUT = 30000;
+DEFAUT_TIMEOUT = 120000;
 
 class Mount {
   constructor(options = {}) {
@@ -50,7 +50,11 @@ class Mount {
    *
    * @param {*} device
    */
-  async deviceIsMounted(device) {
+  async deviceIsMounted(device, node_attach_driver = "") {
+    if (0 === node_attach_driver.localeCompare("onedata")) {
+      device = "onedata";
+    }
+
     const filesystem = new Filesystem();
     if (device.startsWith("/")) {
       device = await filesystem.realpath(device);
@@ -113,7 +117,11 @@ class Mount {
    *
    * @param {*} device
    */
-  async deviceIsMountedAtPath(device, path) {
+  async deviceIsMountedAtPath(device, path, node_attach_driver = "") {
+    if (0 === node_attach_driver.localeCompare("onedata")) {
+      device = "onedata";
+    }
+
     const filesystem = new Filesystem();
     if (device.startsWith("/") && !device.startsWith("//")) {
       device = await filesystem.realpath(device);
